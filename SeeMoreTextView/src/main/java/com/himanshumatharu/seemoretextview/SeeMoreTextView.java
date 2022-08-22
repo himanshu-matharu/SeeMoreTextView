@@ -7,8 +7,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.Point;
-import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -16,14 +14,11 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.TypefaceSpan;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 
@@ -41,10 +36,10 @@ public class SeeMoreTextView extends androidx.appcompat.widget.AppCompatTextView
     private BufferType bufferType;
     private boolean readMore = true;
     private int trimLength;
-    private CharSequence trimCollapsedText;
-    private CharSequence trimExpandedText;
+    private CharSequence viewCollapsedText;
+    private CharSequence viewExpandedText;
     private final SeeMoreClickableSpan viewMoreSpan;
-    private int colorClickableText;
+    private int clickableTextColor;
     private final boolean showTrimExpandedText;
 
     private int trimMode;
@@ -61,12 +56,12 @@ public class SeeMoreTextView extends androidx.appcompat.widget.AppCompatTextView
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SeeMoreTextView);
         this.trimLength = typedArray.getInt(R.styleable.SeeMoreTextView_trimLength,DEFAULT_TRIM_LENGTH);
-        int resourceIdTrimCollapsedText = typedArray.getResourceId(R.styleable.SeeMoreTextView_trimCollapsedText,R.string.read_more);
-        int resourceIdTrimExpandedText = typedArray.getResourceId(R.styleable.SeeMoreTextView_trimExpandedText,R.string.read_less);
-        this.trimCollapsedText = getResources().getString(resourceIdTrimCollapsedText);
-        this.trimExpandedText = getResources().getString(resourceIdTrimExpandedText);
+        int resourceIdTrimCollapsedText = typedArray.getResourceId(R.styleable.SeeMoreTextView_viewCollapsedText,R.string.read_more);
+        int resourceIdTrimExpandedText = typedArray.getResourceId(R.styleable.SeeMoreTextView_viewExpandedText,R.string.read_less);
+        this.viewCollapsedText = getResources().getString(resourceIdTrimCollapsedText);
+        this.viewExpandedText = getResources().getString(resourceIdTrimExpandedText);
         this.trimLines = typedArray.getInt(R.styleable.SeeMoreTextView_trimLines,DEFAULT_TRIM_LINES);
-        this.colorClickableText = typedArray.getColor(R.styleable.SeeMoreTextView_colorClickableText, Color.parseColor("#c0c0c0"));
+        this.clickableTextColor = typedArray.getColor(R.styleable.SeeMoreTextView_clickableTextColor, Color.parseColor("#c0c0c0"));
         this.showTrimExpandedText = typedArray.getBoolean(R.styleable.SeeMoreTextView_showTrimExpandedText,DEFAULT_SHOW_TRIM_EXPANDED_TEXT);
         this.trimMode = typedArray.getInt(R.styleable.SeeMoreTextView_trimMode, TRIM_MODE_LINES);
         this.animating = false;
@@ -155,7 +150,7 @@ public class SeeMoreTextView extends androidx.appcompat.widget.AppCompatTextView
         int trimEndIndex = text.length();
         switch (trimMode){
             case TRIM_MODE_LINES:
-                trimEndIndex = lineEndIndex - (ELLIPSIZE.length() + trimCollapsedText.length());
+                trimEndIndex = lineEndIndex - (ELLIPSIZE.length() + viewCollapsedText.length());
                 if (trimEndIndex < 0){
                     trimEndIndex = trimLength + 1;
                 }
@@ -166,14 +161,14 @@ public class SeeMoreTextView extends androidx.appcompat.widget.AppCompatTextView
         }
         SpannableStringBuilder s = new SpannableStringBuilder(text,0,trimEndIndex)
                 .append(ELLIPSIZE)
-                .append(trimCollapsedText);
-        return addClickableSpan(s,trimCollapsedText);
+                .append(viewCollapsedText);
+        return addClickableSpan(s, viewCollapsedText);
     }
 
     private CharSequence updateExpandedText(){
         if (showTrimExpandedText){
-            SpannableStringBuilder s = new SpannableStringBuilder(text,0,text.length()).append("  ").append(trimExpandedText);
-            return addClickableSpan(s,trimExpandedText);
+            SpannableStringBuilder s = new SpannableStringBuilder(text,0,text.length()).append("  ").append(viewExpandedText);
+            return addClickableSpan(s, viewExpandedText);
         }
         return text;
     }
@@ -189,16 +184,16 @@ public class SeeMoreTextView extends androidx.appcompat.widget.AppCompatTextView
         setText();
     }
 
-    public void setColorClickableText(int colorClickableText){
-        this.colorClickableText = colorClickableText;
+    public void setClickableTextColor(int clickableTextColor){
+        this.clickableTextColor = clickableTextColor;
     }
 
-    public void setTrimCollapsedText(CharSequence trimCollapsedText){
-        this.trimCollapsedText = trimCollapsedText;
+    public void setViewCollapsedText(CharSequence viewCollapsedText){
+        this.viewCollapsedText = viewCollapsedText;
     }
 
-    public void setTrimExpandedText(CharSequence trimExpandedText){
-        this.trimExpandedText = trimExpandedText;
+    public void setViewExpandedText(CharSequence viewExpandedText){
+        this.viewExpandedText = viewExpandedText;
     }
 
     public void setTrimMode(int trimMode){
@@ -330,7 +325,7 @@ public class SeeMoreTextView extends androidx.appcompat.widget.AppCompatTextView
 
         @Override
         public void updateDrawState(TextPaint ds){
-            ds.setColor(colorClickableText);
+            ds.setColor(clickableTextColor);
         }
     }
 

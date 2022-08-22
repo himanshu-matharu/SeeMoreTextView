@@ -2,11 +2,11 @@
 <resources>
 
     <declare-styleable name="SeeMoreTextView">
-        <attr name="trimExpandedText" format="string"/>
-        <attr name="trimCollapsedText" format="string"/>
+        <attr name="viewExpandedText" format="string"/>
+        <attr name="viewCollapsedText" format="string"/>
         <attr name="trimLength" format="integer"/>
         <attr name="showTrimExpandedText" format="boolean"/>
-        <attr name="colorClickableText" format="color"/>
+        <attr name="clickableTextColor" format="color"/>
         <attr name="trimLines" format="integer"/>
         <attr name="trimMode">
             <enum name="trimModeLine" value="0"/>
