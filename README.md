@@ -21,7 +21,7 @@ allprojects {
 
 2. Add the dependency
 ```
-implementation 'com.github.himanshu-matharu:SeeMoreTextView:1.0.0'
+implementation 'com.github.himanshu-matharu:SeeMoreTextView:1.0.1'
 ```
 
 ## How to Use
